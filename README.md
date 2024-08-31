@@ -24,46 +24,46 @@ To interact with this contract, users can use Remix, an online Solidity IDE. Fol
 
      solidity
      // SPDX-License-Identifier: MIT
-     pragma solidity ^0.8.18;
+pragma solidity 0.8.18;
 
-     import "@openzeppelin/contracts/access/Ownable.sol";
+/*
+       REQUIREMENTS
+    1. Your contract will have public variables that store the details about your coin (Token Name, Token Abbrv., Total Supply)
+    2. Your contract will have a mapping of addresses to balances (address => uint)
+    3. You will have a mint function that takes two parameters: an address and a value. 
+       The function then increases the total supply by that number and increases the balance 
+       of the “sender” address by that amount
+    4. Your contract will have a burn function, which works the opposite of the mint function, as it will destroy tokens. 
+       It will take an address and value just like the mint functions. It will then deduct the value from the total supply 
+       and from the balance of the “sender”.
+    5. Lastly, your burn function should have conditionals to make sure the balance of "sender" is greater than or equal 
+       to the amount that is supposed to be burned.
+*/
 
-     contract MyToken is Ownable {
+contract MyToken {
 
-         // Public variables to store token details
-         string public tokenName = "UniqueToken";
-         string public tokenSymbol = "UTK";
-         uint256 public totalTokenSupply;
+    // Public variables here
+    string public tokenName = "artifacts"; 
+    string public tokenAbbrv = unicode"ΜΤΑ";
+    uint public totalSupply = 0;
 
-         // Mapping to store balances of addresses
-         mapping(address => uint256) public accountBalances;
+    // Mapping variable here
+    mapping(address => uint) public balances;
 
-         // Events
-         event TokensMinted(address indexed to, uint256 amount);
-         event TokensBurned(address indexed from, uint256 amount);
+    // Mint function
+    function mint(address _address, uint _value) public {
+        totalSupply += _value;
+        balances[_address] += _value;
+    }
 
-         // Mint function to create new tokens for a specific address
-         function mintTokens(address _address, uint256 amount) public onlyOwner {
-             require(amount > 0, "Amount must be greater than zero");
-             // Increase total token supply and balance of the specified address
-             totalTokenSupply += amount;
-             accountBalances[_address] += amount;
-
-             emit TokensMinted(_address, amount);
-         }
-
-         // Burn function to destroy tokens from a specific address
-         function burnTokens(address _address, uint256 amount) public onlyOwner {
-             require(amount > 0, "Amount must be greater than zero");
-             require(accountBalances[_address] >= amount, "Insufficient balance");
-
-             // Deduct tokens from total supply and balance of the specified address
-             totalTokenSupply -= amount;
-             accountBalances[_address] -= amount;
-
-             emit TokensBurned(_address, amount);
-         }
-     }
+    // Burn function
+    function burn(address _address, uint _value) public {
+        require(balances[_address] >= _value, "Insufficient balance to burn");
+        totalSupply -= _value;
+        balances[_address] -= _value;
+    }
+    
+}
      
 
 4. *Compile the Code:*
